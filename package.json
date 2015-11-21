@@ -1,0 +1,16 @@
+{
+  "name": "d3tests",
+  "version": "1.0.0",
+  "description": "few tests on d3.js library",
+  "main": "server.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Victor Dupuy",
+  "license": "MIT",
+  "dependencies": {
+    "body-parser": "^1.14.1",
+    "express": "^4.13.3",
+    "path": "^0.12.7"
+  }
+}

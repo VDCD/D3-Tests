@@ -1,0 +1,205 @@
+<!doctype html>
+<html lang="en">
+	<head>
+	    <meta charset="UTF-8" />
+	    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	    <title>Tests D3_10</title>
+	    <link rel="stylesheet" type="text/css" href="css/styleD3.css">
+	    <link rel=stylesheet type="text/css" href="css/grille.css"/>
+	    <script type="text/javascript" src="libs/jquery-1.11.2.min.js"></script>
+	    <script type="text/javascript" src="libs/d3.min.js"></script>
+	    
+	    <style>
+	    	circle.dot{
+	    		fill : steelblue;
+	    	}
+
+	    	.axis text{
+	    		font : 10px sans-serif;
+	    	}
+
+	    	.axis path, .axis line{
+	    		fill : none;
+	    		stroke : #000;
+	    		shape-rendering: crispEdges;
+	    	}
+	    </style>
+	</head>
+
+	<body>
+		<div class="row">
+			<div class="col-12 textCenter header midnight track"><h1>Test D3.js</h1></div>
+<!-- 			<div class="col-12 textCenter separation turquoise track"><h1>Build your own chart !</h1></div> -->
+			<div id="graphe" class="graph col-12" ondragstart="return false"  onselectstart="return false">
+			</div>
+
+			<div class="col-12 textCenter footer midnight track">
+				<h1>Footer</h1>
+				<button id="clickMe">Bouton</button>
+			</div>
+		</div>
+			
+
+		<script type="text/javascript">
+
+			var grapheDiv = $("#graphe");
+
+			var dimensions = {
+				width : grapheDiv.width(),
+				height : grapheDiv.height(),			
+			}
+
+			var svg = d3.select("#graphe").append("svg")
+				.attr("width", dimensions.width)
+				.attr("height", dimensions.height)
+				.attr("class", "dot chart")
+				.append("g");
+
+			var random = function(max){
+				return (Math.random()*max);
+			}
+
+			d3.csv("sets/dataSet_1.csv", function(csv){
+
+
+				var data = [];
+
+				csv.forEach(function(d,i){
+
+					data.push({
+						weight : parseFloat(d.weight),
+						prenom : d.first_name,
+						nom : d.last_name,
+						mail : d.email,
+						pays : d.country,
+						ip : d.ip_address,
+						age : parseFloat(d.age)
+					});
+				});
+
+
+				// Scales 
+
+				var age = d3.scale.linear()
+					.domain(d3.extent(data, function(d){
+						return d.age;
+					}))
+					.range([0, dimensions.width]);
+
+				var weight = d3.scale.linear()
+					.domain(d3.extent(data, function(d){
+						return d.weight;
+					}))
+					.range([0, dimensions.height]);
+
+				var color = d3.scale.category10();
+				
+				/*// Axis 
+				var xAxis = d3.svg.axis()
+					.scale(age)
+					.orient("bottom")
+					.tickPadding(5);
+
+				var yAxis = d3.svg.axis()
+					.scale(weight)
+					.orient("left")
+					.tickPadding(5);
+
+				svg.append("g")
+					.attr("class", "y axis")
+					.call(yAxis);
+
+				svg.append("g")
+					.attr("class", "x axis")
+					.attr("transform", "translate(0,"+weight.range()[0]+")")
+					.call(xAxis);*/
+
+				// Construction du graphe
+
+				svg.selectAll(".dot")
+					.data(data)
+				.enter().append("circle")
+					.attr("r",15)
+					.attr("fill", function(d){
+						return color(d.nom);
+					})
+					.attr("cx", function(d){
+						return age(d.age);
+					})
+					.attr("cy", function(d,i){
+						return weight(d.weight);
+					})
+					.attr("prenom", function(d){
+						return d.prenom;
+					})
+					.attr("nom", function(d){
+						return d.nom;
+					})
+					.attr("age", function(d){
+						return d.age;
+					})
+					.attr("weight", function(d){
+						return d.weight;
+					})
+					.on("click", function(){
+						var nomComplet = d3.select(this).attr("prenom")+ " " +d3.select(this).attr("nom");
+						$(".footer h1").text("Nom complet : "+nomComplet+" , Age : "+d3.select(this).attr("age")+" ans , Poids : "+d3.select(this).attr("weight")+" g");
+
+					});
+
+					d3.select("#clickMe").on(
+						"click", function(){
+							var index = 1;
+							var t0 = Date.now();
+							var xCenter = dimensions.width/2;
+							var yCenter = dimensions.height/2;
+							d3.selectAll("circle")
+									.each(function(d){
+										var angle = random(2*Math.PI);
+										
+										console.log(xCenter, yCenter);
+										d3.select(this)
+										.attr("angle", angle)
+										.transition()
+										.duration(400)
+										.attr("cx", dimensions.width/2)
+										.attr("cy", dimensions.height/2)
+										.transition()
+										.duration(400)
+										.attr("cx", dimensions.width/2 + 300* Math.cos(angle))
+										.attr("cy", dimensions.height/2 + 300* Math.sin(angle));
+
+									});
+
+							var interval = 1000; // one second
+
+							var makeCallback = function() {
+
+							    // note that we're returning a new callback function each time
+							    return function() {
+							        d3.selectAll("circle")
+							        	.each(function(d){
+							        		var newAngle = random(2*Math.PI);
+							        		d3.select(this)
+							        		.transition()
+											.duration(1000)
+											.attr("cx", dimensions.width/2 + 300* Math.cos(newAngle))
+											.attr("cy", dimensions.height/2 + 300* Math.sin(newAngle));
+							        	})
+							        	
+							        d3.timer(makeCallback(),interval);
+							        return true;
+							    }
+							};
+
+							d3.timer(makeCallback(),interval);
+
+						});
+			});
+
+		</script>
+
+	</body>
+</html>
+<!-- 
+d3.select(this).parentNode.appendChild(d3.select(this)); -->
