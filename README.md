@@ -7,7 +7,7 @@ Few tests I did with d3.js. Using .csv file to display points on page according 
 It's quite useless per say. It displays basic data display and some possible manipulations of this display. I think it's fun to try at least once though :)
 
 ##Where can I see these tests?
-The 4 versions display points coming from mockup data in the set folder.
+The 4 versions display points coming from mockup data in the set folder. Just press the button on the bottom of the page to launch the animation. Some animation repeat themselves infinitely (3 and 4). For others you can just press on the button again at the end of the animation (1 and 2).
   
 ###Regroup all points on a line & move them all.
   https://d3tests.herokuapp.com/1
